@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class SQTextAttribute: NSObject {
+@objc public class SQTextAttribute: NSObject {
     public var format = SQTextAttributeFormat()
     public var textInfo = SQTextAttributeTextInfo()
 }

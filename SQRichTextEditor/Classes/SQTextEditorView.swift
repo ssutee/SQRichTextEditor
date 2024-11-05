@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-public protocol SQTextEditorDelegate: class {
+public protocol SQTextEditorDelegate: AnyObject {
     
     /// Called when the editor components is ready.
     func editorDidLoad(_ editor: SQTextEditorView)
@@ -36,13 +36,13 @@ public extension SQTextEditorDelegate {
     func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {}
 }
 
-public class SQTextEditorView: UIView {
+@objc public class SQTextEditorView: UIView {
     
     public weak var delegate: SQTextEditorDelegate?
     
-    public lazy var selectedTextAttribute = SQTextAttribute()
+    @objc public lazy var selectedTextAttribute = SQTextAttribute()
     
-    public lazy var contentHeight: Int = 0
+    @objc public lazy var contentHeight: Int = 0
     
     private enum JSFunctionType {
         case getHTML
@@ -303,7 +303,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter html: HTML String.
      */
-    public func getHTML(completion: @escaping (_ html: String?) -> ()) {
+    @objc public func getHTML(completion: @escaping (_ html: String?) -> ()) {
         webView.evaluateJavaScript(JSFunctionType.getHTML.name, completionHandler: { (value, error) in
             completion(value as? String)
         })
@@ -315,7 +315,7 @@ public class SQTextEditorView: UIView {
      - Parameter html: The html String to insert.
      - Parameter completion: The block to execute after the operation finishes. This takes an error of script evaluation as a parameter. You may specify nil for this parameter.
      */
-    public func insertHTML(_ html: String,
+    @objc public func insertHTML(_ html: String,
                            completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.insertHTML(html: html).name, completionHandler: { (_, error) in
             completion?(error)
@@ -349,7 +349,7 @@ public class SQTextEditorView: UIView {
      
      ```
      */
-    public func setTextSelection(startElementId: String,
+    @objc public func setTextSelection(startElementId: String,
                                  startIndex: Int,
                                  endElementId: String,
                                  endIndex: Int,
@@ -369,7 +369,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter text: Selected text.
      */
-    public func getSelectedText(completion: @escaping (_ text: String?) -> ()) {
+    @objc public func getSelectedText(completion: @escaping (_ text: String?) -> ()) {
         webView.evaluateJavaScript(JSFunctionType.getSelectedText.name,
                                    completionHandler: { (value, error) in
                                     completion(value as? String)
@@ -380,7 +380,7 @@ public class SQTextEditorView: UIView {
      Makes any non-bold currently selected text bold (by wrapping it in a 'b' tag),
      otherwise removes any bold formatting from the selected text.
      */
-    public func bold(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func bold(completion: ((_ error: Error?) -> ())? = nil) {
         selectedTextAttribute.format.hasBold ?
             removeFormat(.bold, completion: completion) :
             setFormat(.bold, completion: completion)
@@ -390,7 +390,7 @@ public class SQTextEditorView: UIView {
      Makes any non-italic currently selected text italic (by wrapping it in an 'i' tag),
      otherwise removes any italic formatting from the selected text.
      */
-    public func italic(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func italic(completion: ((_ error: Error?) -> ())? = nil) {
         selectedTextAttribute.format.hasItalic ?
             removeFormat(.italic, completion: completion) :
             setFormat(.italic, completion: completion)
@@ -400,7 +400,7 @@ public class SQTextEditorView: UIView {
      Makes any non-underlined currently selected text underlined (by wrapping it in a 'u' tag),
      otherwise removes any underline formatting from the selected text.
      */
-    public func underline(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func underline(completion: ((_ error: Error?) -> ())? = nil) {
         selectedTextAttribute.format.hasUnderline ?
             removeFormat(.underline, completion: completion) :
             setFormat(.underline, completion: completion)
@@ -410,7 +410,7 @@ public class SQTextEditorView: UIView {
      Makes any non-strikethrough currently selected text underlined (by wrapping it in a 'del' tag),
      otherwise removes any strikethrough formatting from the selected text.
      */
-    public func strikethrough(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func strikethrough(completion: ((_ error: Error?) -> ())? = nil) {
         selectedTextAttribute.format.hasStrikethrough ?
             removeFormat(.strikethrough, completion: completion) :
             setFormat(.strikethrough, completion: completion)
@@ -421,7 +421,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter color: The colour to set.
      */
-    public func setText(color: UIColor, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func setText(color: UIColor, completion: ((_ error: Error?) -> ())? = nil) {
         let hex = Helper.rgbColorToHex(color: color)
         
         webView.evaluateJavaScript(JSFunctionType.setTextColor(hex: hex).name,
@@ -435,7 +435,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter color: The colour to set.
      */
-    public func setText(backgroundColor: UIColor, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func setText(backgroundColor: UIColor, completion: ((_ error: Error?) -> ())? = nil) {
         let hex = Helper.rgbColorToHex(color: backgroundColor)
         
         webView.evaluateJavaScript(JSFunctionType.setTextBackgroundColor(hex: hex).name,
@@ -449,7 +449,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter size: A size to set. The absolute length units will be 'px'
      */
-    public func setText(size: Int, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func setText(size: Int, completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.setTextSize(size: size).name,
                                    completionHandler: { (_, error) in
                                     completion?(error)
@@ -461,7 +461,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter url: The source path for the image.
      */
-    public func insertImage(url: String, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func insertImage(url: String, completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.insertImage(url: url).name,
                                    completionHandler: { (_, error) in
                                     completion?(error)
@@ -473,7 +473,7 @@ public class SQTextEditorView: UIView {
      
      - Parameter url: The url or email to link to.
      */
-    public func makeLink(url: String, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func makeLink(url: String, completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.makeLink(url: url).name,
                                    completionHandler: { (_, error) in
                                     completion?(error)
@@ -483,7 +483,7 @@ public class SQTextEditorView: UIView {
     /**
      Removes any link that is currently at least partially selected.
      */
-    public func removeLink(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func removeLink(completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.removeLink.name,
                                    completionHandler: { (_, error) in
                                     completion?(error)
@@ -494,7 +494,7 @@ public class SQTextEditorView: UIView {
      Clear Editor's content. Method removes all Blocks and inserts new initial empty Block
      `<div><br></div>`
      */
-    public func clear(completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func clear(completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.clear.name,
                                    completionHandler: { (_, error) in
                                     completion?(error)
@@ -504,7 +504,7 @@ public class SQTextEditorView: UIView {
     /**
      The editor gained focus or lost focus
      */
-    public func focus(_ isFocused: Bool, completion: ((_ error: Error?) -> ())? = nil) {
+    @objc public func focus(_ isFocused: Bool, completion: ((_ error: Error?) -> ())? = nil) {
         webView.evaluateJavaScript(JSFunctionType.focusEditor(isFocused: isFocused).name,
                                    completionHandler: { [weak self] (_, error) in
                                     if !isFocused {
